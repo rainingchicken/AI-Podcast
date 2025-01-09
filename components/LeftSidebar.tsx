@@ -27,6 +27,7 @@ const LeftSidebar = () => {
             pathname === route || pathname.startsWith(`${route}/`);
           return (
             <Link
+              key={label}
               className={cn(
                 "flex gap-3 items-center py-4 max-lg:px-4 justify-center lg:justify-start",
                 {
