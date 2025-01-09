@@ -92,7 +92,7 @@ const GeneratePodcast = (props: GeneratePodcastProps) => {
           {isGenerating ? (
             <>
               Submitting
-              <Loader size={20} className="animate-spin mr-2" />
+              <Loader size={20} className="animate-spin ml-2" />
             </>
           ) : (
             "Generate"
