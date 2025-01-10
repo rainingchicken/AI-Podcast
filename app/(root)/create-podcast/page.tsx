@@ -30,6 +30,9 @@ import GeneratePodcast from "@/components/GeneratePodcast";
 import GenerateThumbnail from "@/components/GenerateThumbnail";
 import { Loader } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
+import { useToast } from "@/hooks/use-toast";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
@@ -51,6 +54,8 @@ const CreatePodcast = () => {
   const [voicePrompt, setVoicePrompt] = useState("");
   const [voiceType, setVoiceType] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const createPodcast = useMutation(api.podcasts.createPodcast);
+  const { toast } = useToast();
 
   // 1. Define your form.
   const form = useForm<z.infer<typeof formSchema>>({
@@ -62,10 +67,39 @@ const CreatePodcast = () => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     // Do something with the form values.
     // ✅ This will be type-safe and validated.
-    console.log(values);
+    try {
+      setIsSubmitting(true);
+      if (!audioUrl || !imageUrl || !voiceType) {
+        toast({
+          title: "Please generate audio and image",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        throw new Error("Please generate audio and image");
+      }
+      await createPodcast({
+        podcastTitle: data.podcastTitle,
+        podcastDescription: data.podcastDescription,
+        audioUrl,
+        imageUrl,
+        voiceType,
+        imagePrompt,
+        voicePrompt,
+        views: 0,
+        audioDuration,
+        audioStorageId: audioStorageId!,
+        imageStorageId: imageStorageId!,
+      });
+    } catch (error) {}
+    console.log(data);
+    toast({
+      title: "Error creating a podcast",
+      variant: "destructive",
+    });
+    setIsSubmitting(false);
   }
 
   return (
