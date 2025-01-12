@@ -20,7 +20,7 @@ const Home = () => {
                 key={_id}
                 title={podcastTitle}
                 description={podcastDescription}
-                imgURL={imageUrl}
+                imgUrl={imageUrl}
                 podcastId={_id}
               />
             )
