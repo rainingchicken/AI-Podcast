@@ -33,6 +33,7 @@ import { Id } from "@/convex/_generated/dataModel";
 import { useToast } from "@/hooks/use-toast";
 import { useMutation } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 const formSchema = z.object({
   podcastTitle: z.string().min(2),
@@ -40,7 +41,9 @@ const formSchema = z.object({
 });
 
 const voiceCategories = ["alloy", "shimmer", "nova", "echo", "fable", "onyx"];
+
 const CreatePodcast = () => {
+  const router = useRouter();
   const [imagePrompt, setImagePrompt] = useState("");
   const [audioStorageId, setAudioStorageId] = useState<Id<"_storage"> | null>(
     null
@@ -80,7 +83,7 @@ const CreatePodcast = () => {
         setIsSubmitting(false);
         throw new Error("Please generate audio and image");
       }
-      await createPodcast({
+      const podcast = await createPodcast({
         podcastTitle: data.podcastTitle,
         podcastDescription: data.podcastDescription,
         audioUrl,
@@ -93,6 +96,11 @@ const CreatePodcast = () => {
         audioStorageId: audioStorageId!,
         imageStorageId: imageStorageId!,
       });
+      toast({
+        title: "Podcast created!",
+      });
+      setIsSubmitting(false);
+      router.push("/");
     } catch (error) {}
     console.log(data);
     toast({
